@@ -1,0 +1,40 @@
+services:
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx_container
+    ports:
+      - 443:443
+    networks:
+      - inception
+    volumes:
+      - wordpress_data:/var/www/ezeppa.42.fr/html
+  wordpress_php:
+    build: ./requirements/wordpress_php
+    container_name: wordpress_php_container
+    ports:
+      - 9000:9000
+    networks:
+      - inception
+    volumes:
+      - wordpress_data:/var/www/ezeppa.42.fr/html
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb_container
+    ports:
+      - 3306:3306
+    networks:
+      - inception
+    # volumes:
+    #   - db_data:/var
+
+
+volumes:
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ezeppa/data/wordpress
+
+networks:
+  inception:
