@@ -6,8 +6,11 @@ services:
       - 443:443
     networks:
       - inception
+    depends_on:
+      - wordpress_php
     volumes:
       - wordpress_data:/var/www/ezeppa.42.fr/html
+
   wordpress_php:
     build: ./requirements/wordpress_php
     container_name: wordpress_php_container
@@ -15,8 +18,13 @@ services:
       - 9000:9000
     networks:
       - inception
+    depends_on:
+      - mariadb
+    env_file:
+      - .env
     volumes:
       - wordpress_data:/var/www/ezeppa.42.fr/html
+
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb_container
@@ -24,9 +32,10 @@ services:
       - 3306:3306
     networks:
       - inception
-    # volumes:
-    #   - db_data:/var
-
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
 
 volumes:
   wordpress_data:
@@ -35,6 +44,13 @@ volumes:
       type: none
       o: bind
       device: /home/ezeppa/data/wordpress
+
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ezeppa/data/mariadb
 
 networks:
   inception:
